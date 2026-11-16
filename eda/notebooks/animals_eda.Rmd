@@ -1,0 +1,12 @@
+---
+title: "animals_eda"
+author: "Sam Rajabian"
+output: html_document
+---
+
+## Load libraries and dataset
+
+```{r message=F, warning=F}
+library(tidyverse)
+```
+
