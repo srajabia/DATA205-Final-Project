@@ -168,3 +168,42 @@ ggplot(animals_box, aes(age_days, stay_in_days, colour = animal_type)) +
 ```
 
 There does not appear to be a correlation.
+
+## Time and adoption
+Include promotion events 2024/25
+Time and intake.
+
+```{r}
+adoptions_2025 <- animalsYearEnd |>
+  filter(year(outcome_date_and_time) == 2025) |>
+  filter(animal_type %in% c("CAT", "DOG")) |>
+  filter(outcome_type == "ADOPTION") |>
+  group_by(as.Date(outcome_date_and_time)) |>
+  summarise(adoptions = n())
+  
+```
+
+
+```{r}
+# 2025 adoption event dates
+event_dates <- as.Date(c("2025-03-14", "2025-05-10", "2025-08-23", "2025-12-20"))
+
+ggplot(adoptions_2025, aes(x=`as.Date(outcome_date_and_time)`, y=adoptions)) + 
+  geom_line() +
+  scale_color_brewer(palette = "Dark2") +
+  geom_vline(xintercept = event_dates, linetype = "dashed", color = "red") + 
+  labs(
+    title = "Adoption Counts over Time (2025)",
+    x = "",
+    y = "Adoption Count",
+    caption = "Source: @MCASAC on Instagram",
+    subtitle = "Lines indicate date of adoption promotion event"
+  ) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+  theme_minimal() + 
+  theme(
+    plot.title = element_text(face = "bold", size = 14)
+  )
+```
+
+
