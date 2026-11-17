@@ -4,6 +4,8 @@ author: "Sam Rajabian"
 output: html_document
 ---
 
+# ((To be cleaned))
+
 ## Load libraries and dataset
 
 ```{r message=F, warning=F}
@@ -44,7 +46,6 @@ animalsYearEnd <- animals |>
   filter(intake_date_and_time <= as.Date("2026-01-02"))
 ```
 
-
 ```{r}
 counts <- animalsYearEnd |>
   mutate(animal_type = if_else(animal_type %in% c("BIRD", "LIVESTOCK"), "OTHER", animal_type),
@@ -72,6 +73,7 @@ ggplot(counts, aes(x=fct_reorder(animal_type, count, .desc = T), y=count, fill =
   theme_minimal() +
   theme(plot.title = element_text(face = "bold"))
 ```
+
 ## Distribution of length of stay
 
 ```{r}
@@ -83,7 +85,6 @@ animals |>
             mean_stay_days = mean(stay_in_days)) |>
   arrange(desc(mean_stay_days))
 ```
-
 
 ```{r}
 animals_box <- animalsYearEnd |>
@@ -167,6 +168,3 @@ ggplot(animals_box, aes(age_days, stay_in_days, colour = animal_type)) +
 ```
 
 There does not appear to be a correlation.
-
-
-
