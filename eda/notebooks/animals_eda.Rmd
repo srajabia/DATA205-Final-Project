@@ -170,8 +170,43 @@ ggplot(animals_box, aes(age_days, stay_in_days, colour = animal_type)) +
 There does not appear to be a correlation.
 
 ## Time and adoption
-Include promotion events 2024/25
-Time and intake.
+
+```{r}
+avg_adoptions <- animalsYearEnd |>
+  filter(animal_type %in% c("CAT", "DOG")) |>
+  filter(outcome_type == "ADOPTION") |>
+  mutate(
+    year = year(outcome_date_and_time),
+    month = month(outcome_date_and_time, label = T)
+    ) |>
+  group_by(year, month, animal_type) |>
+  summarise(count = n(), .groups = "drop") |>
+  group_by(month, animal_type) |>
+  summarise(mean_adoptions = mean(count), .groups = "drop")
+avg_adoptions <- head(avg_adoptions, 24)
+```
+
+## Plot average adoption frequency for each month
+
+```{r}
+ggplot(avg_adoptions, aes(x = month, y = mean_adoptions, fill = animal_type)) +
+  geom_col() +
+  scale_fill_brewer(name = "Animal Type", palette = "Dark2") +
+  labs(
+    title = "Mean Monthly Adoptions by Animal Type (2017-2025)",
+    x = "",
+    y = "Adoption Count",
+    caption = "Source: Montgomery County Animal Services & Adoption Center"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    legend.position = "top"
+  )
+
+```
+
+
 
 ```{r}
 adoptions_2025 <- animalsYearEnd |>
@@ -182,7 +217,6 @@ adoptions_2025 <- animalsYearEnd |>
   summarise(adoptions = n())
   
 ```
-
 
 ```{r}
 # 2025 adoption event dates
