@@ -129,7 +129,8 @@ animals_heatmap <- animals_box |>
 ```{r}
 ggplot(animals_heatmap, aes(animal_type, primary_color, fill = mean_los)) +
   geom_tile(color = "black",linewidth = 0.1) +
-  facet_wrap(~ multicolored) +
+  facet_wrap(~ multicolored,
+             labeller = as_labeller(c("TRUE" = "Multicolored", "FALSE" = "Single-colored"))) +
   scale_fill_viridis_c(
     name = "Mean Stay (Days)",
     option = "rocket",
@@ -140,7 +141,6 @@ ggplot(animals_heatmap, aes(animal_type, primary_color, fill = mean_los)) +
     title = "Length of Stay by Animal Type and Primary Color",
     x = "",
     y = "Animal Color",
-    subtitle = "T/F indicates whether animals are multicolored",
     caption = "Source: Montgomery County Animal Services & Adoption Center"
   ) +
   theme(
@@ -201,7 +201,6 @@ ggplot(avg_adoptions, aes(x = month, y = mean_adoptions, fill = animal_type)) +
   theme_minimal() +
   theme(
     plot.title = element_text(face = "bold", size = 14),
-    legend.position = "top"
   )
 
 ```
@@ -230,7 +229,7 @@ ggplot(adoptions_2025, aes(x=`as.Date(outcome_date_and_time)`, y=adoptions)) +
     title = "Adoption Counts over Time (2025)",
     x = "",
     y = "Adoption Count",
-    caption = "Source: @MCASAC on Instagram",
+    caption = "Sources: Montgomery County Animal Services & Adoption Center\n@MCASAC on Instagram",
     subtitle = "Lines indicate date of adoption promotion event"
   ) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b") +
@@ -240,4 +239,9 @@ ggplot(adoptions_2025, aes(x=`as.Date(outcome_date_and_time)`, y=adoptions)) +
   )
 ```
 
+## Time and intake
+
+```{r}
+
+```
 
