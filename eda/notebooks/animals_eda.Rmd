@@ -172,6 +172,7 @@ There does not appear to be a correlation.
 ## Time and adoption
 
 ```{r}
+# Mean adoptions by month
 avg_adoptions <- animalsYearEnd |>
   filter(animal_type %in% c("CAT", "DOG")) |>
   filter(outcome_type == "ADOPTION") |>
@@ -205,6 +206,41 @@ ggplot(avg_adoptions, aes(x = month, y = mean_adoptions, fill = animal_type)) +
 
 ```
 
+```{r}
+# Mean adpotions by day of week
+avg_adoptions_week <- animalsYearEnd |>
+  filter(animal_type %in% c("CAT", "DOG")) |>
+  filter(outcome_type == "ADOPTION") |>
+  mutate(
+    date = as_date(outcome_date_and_time),
+    day_of_week = wday(outcome_date_and_time, label = T)
+    ) |>
+  group_by(date, day_of_week, animal_type) |>
+  summarise(count = n(), .groups = "drop") |>
+  group_by(day_of_week, animal_type) |>
+  summarise(mean_adoptions = mean(count), .groups = "drop")
+avg_adoptions_week <- head(avg_adoptions_week, 14) |>
+  filter(day_of_week != "Wed") # shelter is closed on wednesday
+```
+
+## Plot mean adoption count by day of week
+
+```{r}
+ggplot(avg_adoptions_week, aes(x = day_of_week, y = mean_adoptions, fill = animal_type)) +
+  geom_col() +
+  scale_fill_brewer(name = "Animal Type", palette = "Dark2") +
+  labs(
+    title = "Mean Adoptions by Day of Week (2017-2025)",
+    x = "",
+    y = "Adoption Count",
+    caption = "Source: Montgomery County Animal Services & Adoption Center",
+    subtitle = "Adoption Center is closed on Wednesdays"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+  )
+```
 
 
 ```{r}
