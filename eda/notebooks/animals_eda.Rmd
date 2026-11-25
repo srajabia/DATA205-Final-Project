@@ -123,7 +123,9 @@ heatmap of color/ adopt time
 animals_heatmap <- animals_box |>
   group_by(animal_type, primary_color, multicolored) |>
   summarise(mean_los = mean(stay_in_days),
-            count = n())
+            count = n(),
+            .groups = "drop") |>
+  mutate(primary_color = fct_relevel(as.character(primary_color), "OTHER"))
 ```
 
 ```{r}
