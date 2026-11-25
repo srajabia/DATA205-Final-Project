@@ -171,6 +171,47 @@ ggplot(animals_box, aes(age_days, stay_in_days, colour = animal_type)) +
 
 There does not appear to be a correlation.
 
+## Time and intake
+
+```{r message=F, warning=F}
+intakes <- animalsYearEnd |>
+  mutate(
+    intake_type = if_else(intake_type %in% c("BOARDING", "VETERINARY", "TRANSFER", "RETURN"), "OTHER", intake_type)
+         ) |>
+  filter(!intake_type == "OTHER") |>
+  filter(animal_type %in% c("CAT", "DOG")) |>
+  mutate(
+    year = year(intake_date_and_time),
+    month = month(intake_date_and_time, label = T)
+    ) |>
+  group_by(year, month, animal_type, intake_type) |>
+  summarise(count = n(), .groups = "drop") |>
+  group_by(month, animal_type, intake_type) |>
+  summarise(mean_intakes = mean(count), .groups = "drop")
+
+# plot
+ggplot(intakes, aes(month, mean_intakes, colour = animal_type, group = animal_type)) + 
+  geom_line(linewidth = 1.05) + 
+  geom_point() + 
+  facet_wrap(~ intake_type, labeller = as_labeller(c("EUTH REQ" = "Euthanasia Request", 
+                                                  "OWNER SUR" = "Owner Surrendered",
+                                                  "CONFISCATE" = "Confiscated",
+                                                  "STRAY" = "Stray"))) + 
+  scale_color_brewer(palette = "Dark2") + 
+  labs(
+    x="",
+    y="Intake Count",
+    color="Animal Type",
+    title = "Average Monthly Animal Intakes (2017-2026)",
+    subtitle = "Mean intake volume by intake type",
+    caption = "Source: Montgomery County Animal Services & Adoption Center"
+  ) +
+  theme_bw() + 
+  theme(plot.title = element_text(face = "bold", size = 14),
+        axis.text.x = element_text(angle = 45, hjust = 1))
+```
+"Kitten season" is shown clearly
+
 ## Time and adoption
 
 ```{r}
@@ -196,7 +237,7 @@ ggplot(avg_adoptions, aes(x = month, y = mean_adoptions, fill = animal_type)) +
   geom_col() +
   scale_fill_brewer(name = "Animal Type", palette = "Dark2") +
   labs(
-    title = "Mean Monthly Adoptions by Animal Type (2017-2025)",
+    title = "Mean Monthly Adoptions by Animal Type (2017-2026)",
     x = "",
     y = "Adoption Count",
     caption = "Source: Montgomery County Animal Services & Adoption Center"
@@ -232,7 +273,7 @@ ggplot(avg_adoptions_week, aes(x = day_of_week, y = mean_adoptions, fill = anima
   geom_col() +
   scale_fill_brewer(name = "Animal Type", palette = "Dark2") +
   labs(
-    title = "Mean Adoptions by Day of Week (2017-2025)",
+    title = "Mean Adoptions by Day of Week (2017-2026)",
     x = "",
     y = "Adoption Count",
     caption = "Source: Montgomery County Animal Services & Adoption Center",
@@ -276,10 +317,3 @@ ggplot(adoptions_2025, aes(x=`as.Date(outcome_date_and_time)`, y=adoptions)) +
     plot.title = element_text(face = "bold", size = 14)
   )
 ```
-
-## Time and intake
-
-```{r}
-
-```
-
